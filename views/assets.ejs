@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Data Aset</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/js/basecoat.js?v=0.3.11" defer></script>
+</head>
+<body class="bg-background">
+  <div class="p-6">
+    <div class="max-w-screen-xl mx-auto">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold">Data Aset</h1>
+          <p class="text-muted-foreground text-sm">Daftar seluruh aset yang tersedia</p>
+        </div>
+        <div class="flex gap-2">
+          <div style="position: relative; display: inline-block;">
+            <button class="btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">
+              Export ▾
+            </button>
+            <div style="display:none; position:absolute; right:0; background:white; border:1px solid #ccc; border-radius:6px; z-index:10; min-width:140px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+              <a href="/assets/export/excel" style="display:block; padding:8px 16px; text-decoration:none; color:#111; font-size:14px;">Export Excel</a>
+              <a href="/assets/export/pdf" style="display:block; padding:8px 16px; text-decoration:none; color:#111; font-size:14px;">Export PDF</a>
+            </div>
+          </div>
+          <a href="/logout" class="btn-outline">Logout</a>
+        </div>
+      </div>
+
+      <form method="GET" action="/assets" class="flex gap-3 mb-6">
+        <input
+          type="text"
+          name="search"
+          value="<%= search %>"
+          placeholder="Cari nama atau kode aset..."
+          class="input flex-1"
+        />
+        <select name="status" class="select">
+          <option value="">Semua Status</option>
+          <option value="available" <%= status === 'available' ? 'selected' : '' %>>Tersedia</option>
+          <option value="in_use" <%= status === 'in_use' ? 'selected' : '' %>>Digunakan</option>
+          <option value="maintenance" <%= status === 'maintenance' ? 'selected' : '' %>>Dalam Perawatan</option>
+          <option value="retired" <%= status === 'retired' ? 'selected' : '' %>>Tidak Aktif</option>
+        </select>
+        <button type="submit" class="btn">Cari</button>
+        <a href="/assets" class="btn-outline">Reset</a>
+      </form>
+
+      <div class="card">
+        <% if (assets.length === 0) { %>
+          <div class="p-8 text-center text-muted-foreground">
+            Tidak ada data aset ditemukan.
+          </div>
+        <% } else { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nama Aset</th>
+              <th>Kode</th>
+              <th>Tipe</th>
+              <th>Brand</th>
+              <th>Kondisi</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% assets.forEach(asset => { %>
+            <tr>
+              <td><%= asset.name %></td>
+              <td><%= asset.code %></td>
+              <td>
+                <%= asset.type === 'equipment' ? 'Peralatan' : asset.type === 'room' ? 'Ruangan' : '-' %>
+              </td>
+              <td><%= asset.brand || '-' %></td>
+              <td>
+                <%= asset.condition === 'good' ? 'Baik' : asset.condition === 'minor_damage' ? 'Rusak Ringan' : asset.condition === 'major_damage' ? 'Rusak Berat' : '-' %>
+              </td>
+              <td>
+                <span class="badge <%= asset.status === 'available' ? 'badge-success' : asset.status === 'in_use' ? 'badge-info' : asset.status === 'maintenance' ? 'badge-warning' : 'badge-destructive' %>">
+                  <%= asset.status === 'available' ? 'Tersedia' : asset.status === 'in_use' ? 'Digunakan' : asset.status === 'maintenance' ? 'Dalam Perawatan' : 'Tidak Aktif' %>
+                </span>
+              </td>
+              <td>
+                <a href="/assets/detail/<%= asset.id %>" class="btn-sm">Detail</a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <div class="flex items-center justify-between p-4">
+          <p class="text-sm text-muted-foreground">
+            Total: <%= pagination.total %> aset
+          </p>
+          <div class="flex gap-1">
+            <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+              <a
+                href="/assets?page=<%= i %>&search=<%= search %>&status=<%= status %>"
+                class="btn-sm <%= pagination.page === i ? '' : 'btn-sm-outline' %>"
+              ><%= i %></a>
+            <% } %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

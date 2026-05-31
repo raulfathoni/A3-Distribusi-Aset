@@ -11,7 +11,7 @@ const home = (req, res) => {
 
 const loginPage = (req, res) => {
   if (req.session.userId) {
-    return res.redirect("/home");
+    return res.redirect("/assets");
   }
   res.render("login", { title: "Login", error: null });
 };
@@ -41,11 +41,10 @@ const login = async (req, res, next) => {
       });
     }
 
-    // Set session
     req.session.userId = user.id;
     req.session.username = user.username;
 
-    res.redirect("/home");
+    res.redirect("/assets");
   } catch (err) {
     next(err);
   }
