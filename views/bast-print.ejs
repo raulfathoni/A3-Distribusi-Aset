@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cetak BAST - <%= distribution.asset_code %></title>
+  <style>
+    body {
+      font-family: 'Times New Roman', Times, serif, sans-serif;
+      color: #000;
+      line-height: 1.35;
+      margin: 15px 30px;
+      background-color: #fff;
+      font-size: 13px;
+    }
+    .no-print-bar {
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px 20px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn {
+      padding: 6px 12px;
+      font-family: sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+    }
+    .btn-primary {
+      background-color: #1e3a8a;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+    .btn-outline {
+      background-color: #fff;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+    .btn-outline:hover {
+      background-color: #f9fafb;
+    }
+    .letterhead {
+      text-align: center;
+      margin-bottom: 12px;
+      border-bottom: 2px double #000;
+      padding-bottom: 8px;
+    }
+    .letterhead h1 {
+      font-size: 16px;
+      margin: 0 0 2px 0;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .letterhead p {
+      margin: 0;
+      font-size: 11px;
+      color: #374151;
+    }
+    .title-doc {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .title-doc h2 {
+      font-size: 14px;
+      margin: 0 0 2px 0;
+      text-decoration: underline;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .title-doc p {
+      margin: 0;
+      font-size: 12px;
+    }
+    .content-section {
+      font-size: 12px;
+      margin-bottom: 8px;
+      text-align: justify;
+    }
+    .identity-table {
+      width: 100%;
+      margin-bottom: 8px;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .identity-table td {
+      padding: 2px 0;
+      vertical-align: top;
+    }
+    .identity-table td.label-col {
+      width: 180px;
+    }
+    .identity-table td.separator-col {
+      width: 15px;
+      text-align: center;
+    }
+    .asset-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    .asset-table th, .asset-table td {
+      border: 1px solid #000;
+      padding: 6px;
+      text-align: left;
+    }
+    .asset-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    .signature-container {
+      margin-top: 25px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .signature-box {
+      width: 40%;
+      text-align: center;
+    }
+    .signature-space {
+      height: 50px;
+    }
+    .signature-box p {
+      margin: 3px 0;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        margin: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navigation / Print Action (Hidden on Print) -->
+  <div class="no-print-bar no-print">
+    <div style="font-family: sans-serif; font-size: 14px; color: #4b5563;">
+      Format BAST - Siap Cetak
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button onclick="window.history.back()" class="btn btn-outline">
+        ← Kembali
+      </button>
+      <button onclick="window.print()" class="btn btn-primary">
+        🖨️ Cetak ke PDF / Kertas
+      </button>
+    </div>
+  </div>
+
+  <!-- Kop Surat Resmi (Letterhead) -->
+  <div class="letterhead">
+    <h1>KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI</h1>
+    <h1 style="font-size: 18px; margin-top: 3px;">UNIVERSITAS FACULTYWARE INDONESIA</h1>
+    <p>Jl. Kampus Raya No. 1, Kota Laragon, Telp: (021) 1234567, Web: www.facultyware.ac.id</p>
+  </div>
+
+  <!-- Judul Dokumen BAST -->
+  <div class="title-doc">
+    <h2>BERITA ACARA SERAH TERIMA ASET</h2>
+    <p>Nomor: BAST/<%= new Date(distribution.distribution_date).getFullYear() %>/00<%= distribution.id %></p>
+  </div>
+
+  <div class="content-section">
+    Pada hari ini, tanggal <%= new Date(distribution.distribution_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) %>, bertempat di Universitas Facultyware Indonesia, kami yang bertanda tangan di bawah ini:
+  </div>
+
+  <!-- Pihak Pertama (Pemberi) -->
+  <table class="identity-table">
+    <tr>
+      <td class="label-col"><strong>I. Nama</strong></td>
+      <td class="separator-col">:</td>
+      <td><%= distribution.allocator_name %></td>
+    </tr>
+    <tr>
+      <td class="label-col">Jabatan</td>
+      <td class="separator-col">:</td>
+      <td>Pengelola Aset (Pihak Pertama)</td>
+    </tr>
+    <tr>
+      <td class="label-col">Email</td>
+      <td class="separator-col">:</td>
+      <td><%= distribution.allocator_email || '-' %></td>
+    </tr>
+  </table>
+
+  <!-- Pihak Kedua (Penerima) -->
+  <table class="identity-table">
+    <tr>
+      <td class="label-col"><strong>II. Nama</strong></td>
+      <td class="separator-col">:</td>
+      <td><%= distribution.recipient_name %></td>
+    </tr>
+    <tr>
+      <td class="label-col">Jabatan / Username</td>
+      <td class="separator-col">:</td>
+      <td>Personel / Penerima (Pihak Kedua) - @<%= distribution.recipient_username %></td>
+    </tr>
+    <tr>
+      <td class="label-col">Email</td>
+      <td class="separator-col">:</td>
+      <td><%= distribution.recipient_email || '-' %></td>
+    </tr>
+  </table>
+
+  <div class="content-section">
+    Pihak Pertama menyerahkan kepada Pihak Kedua, dan Pihak Kedua menyatakan telah menerima aset dalam kondisi baik/sesuai keterangan di bawah ini untuk digunakan guna kepentingan operasional institusi:
+  </div>
+
+  <!-- Rincian Aset -->
+  <table class="asset-table">
+    <thead>
+      <tr>
+        <th style="width: 250px;">Nama Aset</th>
+        <th>Rincian Spesifikasi / Serial Number</th>
+        <th>Kondisi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <strong><%= distribution.asset_name %></strong><br />
+          <span style="font-size: 12px; color: #444;">Kode: <%= distribution.asset_code %></span>
+        </td>
+        <td>
+          <strong>Brand:</strong> <%= distribution.brand || '-' %><br />
+          <strong>Model:</strong> <%= distribution.model || '-' %><br />
+          <strong>Serial Number:</strong> <%= distribution.serial_number || '-' %><br />
+          <strong>Spesifikasi:</strong> <%= distribution.specification || '-' %>
+        </td>
+        <td>
+          <% if (distribution.asset_condition === 'good') { %>
+            Baik
+          <% } else if (distribution.asset_condition === 'minor_damage') { %>
+            Rusak Ringan
+          <% } else if (distribution.asset_condition === 'major_damage') { %>
+            Rusak Berat
+          <% } else { %>
+            <%= distribution.asset_condition || '-' %>
+          <% } %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="content-section">
+    <strong>Catatan Penyerahan:</strong><br />
+    <%= distribution.notes || 'Tidak ada catatan khusus.' %>
+  </div>
+
+  <div class="content-section" style="margin-top: 20px;">
+    Demikian Berita Acara Serah Terima Aset ini dibuat dengan sebenar-benarnya untuk digunakan sebagaimana mestinya. Pihak Kedua berkewajiban merawat, menjaga, dan mengembalikan aset tersebut apabila sudah tidak digunakan lagi atau masa tugas telah berakhir.
+  </div>
+
+  <!-- Tanda Tangan -->
+  <div class="signature-container">
+    <div class="signature-box">
+      <p>Yang Menerima,</p>
+      <p><strong>Pihak Kedua</strong></p>
+      <div class="signature-space"></div>
+      <p><strong><u><%= distribution.recipient_name %></u></strong></p>
+      <p>NIP/NIDN. ..................................</p>
+    </div>
+    <div class="signature-box">
+      <p>Yang Menyerahkan,</p>
+      <p><strong>Pihak Pertama</strong></p>
+      <div class="signature-space"></div>
+      <p><strong><u><%= distribution.allocator_name %></u></strong></p>
+      <p>NIP. ..................................</p>
+    </div>
+  </div>
+
+</body>
+</html>

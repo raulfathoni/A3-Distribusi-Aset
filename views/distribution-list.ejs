@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Distribusi Aset FTI</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/js/basecoat.js?v=0.3.11" defer></script>
+</head>
+<body class="bg-background">
+  <%- include('partials/sidebar', { activeTab: 'distributions' }) %>
+  <div class="p-6">
+    <div class="max-w-screen-xl mx-auto">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold">Distribusi Aset FTI</h1>
+          <p class="text-muted-foreground text-sm">Riwayat alokasi dan peminjaman aset</p>
+        </div>
+        <div class="flex gap-2">
+          <a href="/assets/distributions/api" target="_blank" class="btn btn-sm btn-outline">🔍 REST API</a>
+        </div>
+      </div>
+
+      <form method="GET" action="/assets/distributions" class="flex gap-3 mb-6">
+        <input
+          type="text"
+          name="search"
+          value="<%= search %>"
+          placeholder="Cari nama aset, kode, atau penerima..."
+          class="input flex-1"
+        />
+        <button type="submit" class="btn">Cari</button>
+        <a href="/assets/distributions" class="btn-outline">Reset</a>
+      </form>
+
+      <div class="card">
+        <% if (distributions.length === 0) { %>
+          <div class="p-8 text-center text-muted-foreground">
+            Tidak ada data distribusi ditemukan.
+          </div>
+        <% } else { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Aset</th>
+              <th>Penerima</th>
+              <th>Tanggal Diserahkan</th>
+              <th>Tanggal Dikembalikan</th>
+              <th>Status</th>
+              <th>Catatan</th>
+              <th>Dokumen BAST</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% distributions.forEach(dist => { %>
+            <tr>
+              <td>
+                <div class="font-medium"><%= dist.asset_name %></div>
+                <div class="text-xs text-muted-foreground"><%= dist.asset_code %></div>
+              </td>
+              <td>
+                <div class="font-medium"><%= dist.recipient_name %></div>
+                <div class="text-xs text-muted-foreground">@<%= dist.recipient_username %></div>
+              </td>
+              <td>
+                <%= dist.distribution_date ? new Date(dist.distribution_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-' %>
+              </td>
+              <td>
+                <% if (dist.status === 'returned') { %>
+                  <%= dist.return_date ? new Date(dist.return_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-' %>
+                <% } else if (dist.status === 'active') { %>
+                  <span class="text-xs text-blue-500 font-medium">Sedang Digunakan</span>
+                <% } else { %>
+                  <span class="text-xs text-muted-foreground">-</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (dist.status === 'pending') { %>
+                  <span class="badge badge-warning">Menunggu BAST</span>
+                <% } else if (dist.status === 'active') { %>
+                  <span class="badge badge-info">Aktif</span>
+                <% } else { %>
+                  <span class="badge badge-success">Dikembalikan</span>
+                <% } %>
+              </td>
+              <td class="text-sm max-w-[200px] truncate" title="<%= dist.notes %>">
+                <% if (dist.status === 'returned' && dist.return_notes) { %>
+                  <div class="text-xs text-muted-foreground mb-1">Catatan Pengembalian:</div>
+                  <%= dist.return_notes %>
+                <% } else { %>
+                  <%= dist.notes || '-' %>
+                <% } %>
+              </td>
+              <td>
+                <% if (dist.bast_file_path) { %>
+                  <a href="<%= dist.bast_file_path %>" target="_blank" class="text-xs text-primary hover:underline font-medium inline-flex items-center gap-1">
+                    📄 Lihat Berkas
+                  </a>
+                <% } else { %>
+                  <span class="text-xs text-muted-foreground">-</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="flex gap-1.5 flex-wrap">
+                  <a href="/assets/detail/<%= dist.asset_id %>" class="btn btn-sm" style="background-color: white; color: black; border: 1px solid #e2e8f0; font-weight: 600; padding: 2px 8px; font-size: 12px; height: auto;">Kelola</a>
+                  <a href="/assets/distributions/print/<%= dist.id %>" target="_blank" class="btn btn-sm btn-outline py-0.5 px-1.5 text-xs">Cetak BAST</a>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <div class="flex items-center justify-between p-4">
+          <p class="text-sm text-muted-foreground">
+            Total: <%= pagination.total %> riwayat distribusi
+          </p>
+          <div class="flex gap-1">
+            <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+              <a
+                href="/assets/distributions?page=<%= i %>&search=<%= search %>"
+                class="btn-sm <%= pagination.page === i ? '' : 'btn-sm-outline' %>"
+              ><%= i %></a>
+            <% } %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

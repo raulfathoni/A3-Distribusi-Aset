@@ -39,6 +39,7 @@ const getAllAssets = async (req, res, next) => {
     res.render('assets', {
       title: 'Data Aset',
       user: req.session.username,
+      activeTab: 'assets',
       assets,
       pagination: {
         page,
@@ -72,10 +73,42 @@ const getAssetDetail = async (req, res, next) => {
       });
     }
 
+    // Fetch active/pending distribution
+    const [currentDistRows] = await db.query(
+      `SELECT ad.*, u.name as recipient_name, u.username as recipient_username
+       FROM asset_distributions ad
+       JOIN users u ON ad.recipient_id = u.id
+       WHERE ad.asset_id = ? AND ad.status IN ('pending', 'active')
+       ORDER BY ad.created_at DESC
+       LIMIT 1`,
+      [id]
+    );
+
+    // Fetch distribution history
+    const [historyRows] = await db.query(
+      `SELECT ad.*, u_rec.name as recipient_name, u_rec.username as recipient_username,
+              u_alloc.name as allocator_name, u_alloc.username as allocator_username
+       FROM asset_distributions ad
+       JOIN users u_rec ON ad.recipient_id = u_rec.id
+       JOIN users u_alloc ON ad.allocated_by = u_alloc.id
+       WHERE ad.asset_id = ?
+       ORDER BY ad.created_at DESC`,
+      [id]
+    );
+
+    // Fetch potential recipients (all users)
+    const [recipientRows] = await db.query(
+      `SELECT id, name, username FROM users ORDER BY name ASC`
+    );
+
     res.render('asset-detail', {
       title: 'Detail Aset',
       user: req.session.username,
-      asset: rows[0]
+      activeTab: 'assets',
+      asset: rows[0],
+      currentDistribution: currentDistRows[0] || null,
+      distributionHistory: historyRows,
+      recipients: recipientRows
     });
   } catch (err) {
     next(err);

@@ -13,17 +13,18 @@
   </script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Data Aset</title>
+  <title>Distribusi Aset FTI</title>
   <link rel="stylesheet" href="/assets/styles.css" />
   <script src="/assets/js/basecoat.js?v=0.3.11" defer></script>
 </head>
 <body class="bg-background">
+  <%- include('partials/sidebar', { activeTab: 'assets' }) %>
   <div class="p-6">
     <div class="max-w-screen-xl mx-auto">
 
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold">Data Aset</h1>
+          <h1 class="text-2xl font-bold">Distribusi Aset FTI</h1>
           <p class="text-muted-foreground text-sm">Daftar seluruh aset yang tersedia</p>
         </div>
         <div class="flex gap-2">
@@ -36,7 +37,6 @@
               <a href="/assets/export/pdf" style="display:block; padding:8px 16px; text-decoration:none; color:#111; font-size:14px;">Export PDF</a>
             </div>
           </div>
-          <a href="/logout" class="btn-outline">Logout</a>
         </div>
       </div>
 
@@ -95,7 +95,7 @@
                 </span>
               </td>
               <td>
-                <a href="/assets/detail/<%= asset.id %>" class="btn-sm">Detail</a>
+                <a href="/assets/detail/<%= asset.id %>" class="btn btn-sm" style="background-color: white; color: black; border: 1px solid #e2e8f0; font-weight: 600;">Kelola Distribusi</a>
               </td>
             </tr>
             <% }) %>

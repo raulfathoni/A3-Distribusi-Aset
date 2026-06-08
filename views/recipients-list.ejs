@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Distribusi Aset FTI</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/js/basecoat.js?v=0.3.11" defer></script>
+</head>
+<body class="bg-background">
+  <%- include('partials/sidebar', { activeTab: 'recipients' }) %>
+  <div class="p-6">
+    <div class="max-w-screen-xl mx-auto">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold">Distribusi Aset FTI</h1>
+          <p class="text-muted-foreground text-sm">Daftar personel penanggung jawab aset</p>
+        </div>
+      </div>
+
+      <form method="GET" action="/assets/distributions/recipients" class="flex gap-3 mb-6">
+        <input
+          type="text"
+          name="search"
+          value="<%= search %>"
+          placeholder="Cari penerima (nama, username, email)..."
+          class="input flex-1"
+        />
+        <button type="submit" class="btn">Cari</button>
+        <a href="/assets/distributions/recipients" class="btn-outline">Reset</a>
+      </form>
+
+      <div class="card">
+        <% if (recipients.length === 0) { %>
+          <div class="p-8 text-center text-muted-foreground">
+            Tidak ada data penerima ditemukan.
+          </div>
+        <% } else { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nama Lengkap</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Jumlah Aset yang Dipegang</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% recipients.forEach(rec => { %>
+            <tr>
+              <td>
+                <div class="font-medium"><%= rec.name %></div>
+              </td>
+              <td>
+                <span class="text-muted-foreground">@<%= rec.username %></span>
+              </td>
+              <td>
+                <%= rec.email || '-' %>
+              </td>
+              <td>
+                <% if (rec.active_assets_count > 0) { %>
+                  <span class="badge badge-info">
+                    <%= rec.active_assets_count %> Aset Aktif
+                  </span>
+                <% } else { %>
+                  <span class="badge badge-outline text-muted-foreground">
+                    Tidak ada aset
+                  </span>
+                <% } %>
+              </td>
+              <td>
+                <a href="/assets/distributions?search=<%= rec.username %>" class="btn btn-sm" style="background-color: white; color: black; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 8px; font-size: 12px;">
+                  Lihat Riwayat Aset
+                </a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
