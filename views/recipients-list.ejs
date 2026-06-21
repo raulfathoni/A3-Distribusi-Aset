@@ -34,7 +34,7 @@
           type="text"
           name="search"
           value="<%= search %>"
-          placeholder="Cari penerima (nama, username, email)..."
+          placeholder="Cari penerima (nama, email)..."
           class="input flex-1"
         />
         <button type="submit" class="btn">Cari</button>
@@ -47,11 +47,11 @@
             Tidak ada data penerima ditemukan.
           </div>
         <% } else { %>
+        <div class="overflow-x-auto w-full">
         <table class="table">
           <thead>
             <tr>
               <th>Nama Lengkap</th>
-              <th>Username</th>
               <th>Email</th>
               <th>Jumlah Aset yang Dipegang</th>
               <th>Aksi</th>
@@ -62,9 +62,6 @@
             <tr>
               <td>
                 <div class="font-medium"><%= rec.name %></div>
-              </td>
-              <td>
-                <span class="text-muted-foreground">@<%= rec.username %></span>
               </td>
               <td>
                 <%= rec.email || '-' %>
@@ -81,7 +78,7 @@
                 <% } %>
               </td>
               <td>
-                <a href="/assets/distributions?search=<%= rec.username %>" class="btn btn-sm" style="background-color: white; color: black; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 8px; font-size: 12px;">
+                <a href="/assets/distributions?search=<%= rec.name %>" class="btn btn-sm" style="background-color: white; color: black; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 8px; font-size: 12px;">
                   Lihat Riwayat Aset
                 </a>
               </td>
@@ -89,6 +86,7 @@
             <% }) %>
           </tbody>
         </table>
+        </div>
         <% } %>
       </div>
 

@@ -96,9 +96,14 @@ const getAssetDetail = async (req, res, next) => {
       [id]
     );
 
-    // Fetch potential recipients (all users)
+    // Fetch potential recipients (all users except admin)
     const [recipientRows] = await db.query(
-      `SELECT id, name, username FROM users ORDER BY name ASC`
+      `SELECT id, name, username FROM users 
+       WHERE username != 'admin' 
+       AND id NOT IN (
+         SELECT user_id FROM user_has_roles WHERE role_id = (SELECT id FROM roles WHERE name = 'admin')
+       )
+       ORDER BY name ASC`
     );
 
     res.render('asset-detail', {

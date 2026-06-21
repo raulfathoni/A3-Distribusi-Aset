@@ -65,11 +65,16 @@ const getAllDistributions = async (req, res, next) => {
 const getRecipients = async (req, res, next) => {
   try {
     const search = req.query.search || '';
-    let whereClause = '';
+    let whereClause = `
+      WHERE u.username != 'admin' 
+      AND u.id NOT IN (
+        SELECT user_id FROM user_has_roles WHERE role_id = (SELECT id FROM roles WHERE name = 'admin')
+      )
+    `;
     const params = [];
 
     if (search) {
-      whereClause = 'WHERE u.name LIKE ? OR u.username LIKE ? OR u.email LIKE ?';
+      whereClause += ' AND (u.name LIKE ? OR u.username LIKE ? OR u.email LIKE ?)';
       params.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 

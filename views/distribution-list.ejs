@@ -27,9 +27,6 @@
           <h1 class="text-2xl font-bold">Distribusi Aset FTI</h1>
           <p class="text-muted-foreground text-sm">Riwayat alokasi dan peminjaman aset</p>
         </div>
-        <div class="flex gap-2">
-          <a href="/assets/distributions/api" target="_blank" class="btn btn-sm btn-outline">🔍 REST API</a>
-        </div>
       </div>
 
       <form method="GET" action="/assets/distributions" class="flex gap-3 mb-6">
@@ -50,6 +47,7 @@
             Tidak ada data distribusi ditemukan.
           </div>
         <% } else { %>
+        <div class="overflow-x-auto w-full">
         <table class="table">
           <thead>
             <tr>
@@ -72,7 +70,6 @@
               </td>
               <td>
                 <div class="font-medium"><%= dist.recipient_name %></div>
-                <div class="text-xs text-muted-foreground">@<%= dist.recipient_username %></div>
               </td>
               <td>
                 <%= dist.distribution_date ? new Date(dist.distribution_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-' %>
@@ -95,13 +92,8 @@
                   <span class="badge badge-success">Dikembalikan</span>
                 <% } %>
               </td>
-              <td class="text-sm max-w-[200px] truncate" title="<%= dist.notes %>">
-                <% if (dist.status === 'returned' && dist.return_notes) { %>
-                  <div class="text-xs text-muted-foreground mb-1">Catatan Pengembalian:</div>
-                  <%= dist.return_notes %>
-                <% } else { %>
-                  <%= dist.notes || '-' %>
-                <% } %>
+              <td class="text-sm max-w-[200px] truncate" title="<%= dist.status === 'returned' && dist.return_notes ? dist.return_notes : (dist.notes || '-') %>">
+                <%= dist.status === 'returned' && dist.return_notes ? dist.return_notes : (dist.notes || '-') %>
               </td>
               <td>
                 <% if (dist.bast_file_path) { %>
@@ -115,13 +107,14 @@
               <td>
                 <div class="flex gap-1.5 flex-wrap">
                   <a href="/assets/detail/<%= dist.asset_id %>" class="btn btn-sm" style="background-color: white; color: black; border: 1px solid #e2e8f0; font-weight: 600; padding: 2px 8px; font-size: 12px; height: auto;">Kelola</a>
-                  <a href="/assets/distributions/print/<%= dist.id %>" target="_blank" class="btn btn-sm btn-outline py-0.5 px-1.5 text-xs">Cetak BAST</a>
+                  <a href="/assets/distributions/print/<%= dist.id %>" target="_blank" class="btn-sm-outline py-0.5 px-1.5 text-xs">Cetak BAST</a>
                 </div>
               </td>
             </tr>
             <% }) %>
           </tbody>
         </table>
+        </div>
 
         <div class="flex items-center justify-between p-4">
           <p class="text-sm text-muted-foreground">

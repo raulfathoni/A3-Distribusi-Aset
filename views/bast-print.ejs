@@ -138,12 +138,16 @@
     .signature-box p {
       margin: 3px 0;
     }
+    @page {
+      size: auto;
+      margin: 0mm;
+    }
     @media print {
       .no-print {
         display: none !important;
       }
       body {
-        margin: 10px 20px;
+        margin: 1.6cm 2cm;
       }
     }
   </style>
@@ -156,7 +160,7 @@
       Format BAST - Siap Cetak
     </div>
     <div style="display: flex; gap: 10px;">
-      <button onclick="window.history.back()" class="btn btn-outline">
+      <button onclick="window.history.back()" class="btn-outline">
         ← Kembali
       </button>
       <button onclick="window.print()" class="btn btn-primary">
@@ -166,10 +170,21 @@
   </div>
 
   <!-- Kop Surat Resmi (Letterhead) -->
-  <div class="letterhead">
-    <h1>KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI</h1>
-    <h1 style="font-size: 18px; margin-top: 3px;">UNIVERSITAS FACULTYWARE INDONESIA</h1>
-    <p>Jl. Kampus Raya No. 1, Kota Laragon, Telp: (021) 1234567, Web: www.facultyware.ac.id</p>
+  <div class="letterhead-container" style="display: flex; align-items: center; border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 20px;">
+    <div style="flex-shrink: 0; margin-right: 15px;">
+      <img src="/assets/images/logo_unand.png" alt="Logo Unand" style="width: 80px; height: 80px; object-fit: contain;" />
+    </div>
+    <div style="flex-grow: 1; text-align: center;">
+      <h2 style="font-size: 12px; font-family: 'Times New Roman', Times, serif; font-weight: bold; margin: 0; text-transform: uppercase; color: #000; line-height: 1.2;">KEMENTERIAN PENDIDIKAN TINGGI, SAINS DAN TEKNOLOGI</h2>
+      <h1 style="font-size: 15px; font-family: 'Times New Roman', Times, serif; font-weight: bold; margin: 2px 0 0 0; text-transform: uppercase; color: #000; line-height: 1.2;">UNIVERSITAS ANDALAS</h1>
+      <h1 style="font-size: 15px; font-family: 'Times New Roman', Times, serif; font-weight: bold; margin: 2px 0 0 0; text-transform: uppercase; color: #000; line-height: 1.2;">FAKULTAS TEKNOLOGI INFORMASI</h1>
+      <p style="font-size: 10px; margin: 4px 0 0 0; line-height: 1.3; color: #000; font-family: 'Times New Roman', Times, serif;">
+        Kampus Universitas Andalas, Limau Manis, Padang - 25163<br />
+        website: <span style="text-decoration: underline;">http://fti.unand.ac.id</span> email: sekretariat@it.unand.ac.id
+      </p>
+    </div>
+    <!-- Empty block to balance the logo flex centering -->
+    <div style="width: 80px; flex-shrink: 0; margin-left: 15px;" class="no-print-placeholder"></div>
   </div>
 
   <!-- Judul Dokumen BAST -->
@@ -179,7 +194,7 @@
   </div>
 
   <div class="content-section">
-    Pada hari ini, tanggal <%= new Date(distribution.distribution_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) %>, bertempat di Universitas Facultyware Indonesia, kami yang bertanda tangan di bawah ini:
+    Pada hari ini, tanggal <%= new Date(distribution.distribution_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) %>, bertempat di Universitas Andalas, kami yang bertanda tangan di bawah ini:
   </div>
 
   <!-- Pihak Pertama (Pemberi) -->
@@ -209,9 +224,9 @@
       <td><%= distribution.recipient_name %></td>
     </tr>
     <tr>
-      <td class="label-col">Jabatan / Username</td>
+      <td class="label-col">Jabatan</td>
       <td class="separator-col">:</td>
-      <td>Personel / Penerima (Pihak Kedua) - @<%= distribution.recipient_username %></td>
+      <td>Penerima Aset (Pihak Kedua)</td>
     </tr>
     <tr>
       <td class="label-col">Email</td>
